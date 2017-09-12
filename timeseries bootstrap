@@ -1,0 +1,14 @@
+
+boot.fn=function (data,index )
+  + coefficients(lm(y~X1+X2 ,data=data ,
+                    subset =index))
+
+new.matrix = matrix(1:1000,nrow=10,ncol=100,byrow=TRUE)
+i = sample(10,10,replace = T)
+new.rows = as.vector(new.matrix[i,])
+new.Xy = Xy[new.rows,]
+boot(new.Xy,boot.fn,1000)
+
+#time series bootstrap using tsboot with length of block equals to 100
+boot.fn2 = function(data) {coef(lm(y~X1+X2 ,data=data ))}
+tsboot(tseries=Xy, boot.fn2, sim="fixed", l=100, R=100, n.sim=1000)
