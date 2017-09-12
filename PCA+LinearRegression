@@ -1,0 +1,24 @@
+#proportion of variance of first 5 principals
+X = rbind(x,x.test)
+pca.out=prcomp(X,scale = TRUE)
+names(pca.out)
+pca.var=pca.out$sdev^2
+pve5=pca.var[1:5]/sum(pca.var)
+sum(pve5)
+
+####linear regression model after PCA
+x.transformed =as.matrix(x)%*%as.matrix(pca.out$rotation[,1:5])
+x.transformed = data.frame(x.transformed)
+y = data.frame(y)
+dat = cbind(x.transformed,y)
+lm.fit = lm(y~.,dat)
+x.ttransformed = as.matrix(x.test)%*%as.matrix(pca.out$rotation[,1:5])
+x.ttransformed = data.frame(x.ttransformed)
+ypredict = predict(lm.fit,x.ttransformed)
+mean((y.test-ypredict)^2)
+
+#OLS linear regression model
+dat = cbind(x,y)
+ols.fit = lm(y~.,dat)
+ypredict = predict(ols.fit,x.test)
+mean((ypredict-y.test)^2)
