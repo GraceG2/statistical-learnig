@@ -1,0 +1,44 @@
+sum = 0
+for (i in 1:100)
+{
+  set.seed(i)
+  Xt_y0 <- mvrnorm(50, rep(0,10), diag(10))
+  Xt_y1 <- mvrnorm(50, rep(c(1,0), each=5), diag(10))
+  xtrain = rbind(Xt_y0,Xt_y1)
+  ytrain=rep(c(-1,1),c(50,50))
+  dtrain=data.frame(xtrain,y=as.factor(ytrain))
+  Xp_y0 <- mvrnorm(500, rep(0,10), diag(10))
+  Xp_y1 <- mvrnorm(500, rep(c(1,0), each=5), diag(10))
+  xtest = rbind(Xp_y0,Xp_y1)
+  ytest=rep(c(-1,1),c(500,500))
+  dtest=data.frame(xtest,y=as.factor(ytest))
+  svmfit=svm(y~.,dtrain,kernel ="linear")
+  svmpredict = predict(svmfit,dtest)
+  terror = mean(dtest$y!=svmpredict)
+  sum = sum +terror
+}
+sum/100
+
+sum = 0
+for (i in 1:100)
+{
+  set.seed(i)
+  Xt_y0 <- mvrnorm(50, rep(0,10), diag(10))
+  Xt_y1 <- mvrnorm(50, rep(c(1,0), each=5), diag(10))
+  xtrain = rbind(Xt_y0,Xt_y1)
+  ytrain=rep(c(-1,1),c(50,50))
+  dtrain=data.frame(xtrain,y=as.factor(ytrain))
+  Xp_y0 <- mvrnorm(500, rep(0,10), diag(10))
+  Xp_y1 <- mvrnorm(500, rep(c(1,0), each=5), diag(10))
+  xtest = rbind(Xp_y0,Xp_y1)
+  ytest=rep(c(-1,1),c(500,500))
+  dtest=data.frame(xtest,y=as.factor(ytest))
+  glmfit=glm(y~.,dtrain,family=binomial)
+  glmprobs = predict(glmfit,dtest,type="response")
+  glmprobs[1:10]
+  glmpredict = rep(-1,1000)
+  glmpredict[glmprobs>0.5]=1
+  terror = mean(dtest$y!=glmpredict)
+  sum = sum +terror
+}
+sum/100
